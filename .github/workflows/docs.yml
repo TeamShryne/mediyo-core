@@ -1,0 +1,29 @@
+name: docs
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: latest
+      - run: cargo doc --no-deps --manifest-path crates/mediyo-core/Cargo.toml
+      - run: mdbook build docs
+      - run: |
+          mkdir -p _site
+          cp -r docs/book _site/guide
+          cp -r target/doc _site/doc
+          cp README.md _site/
+          echo '<meta http-equiv="refresh" content="0; url=guide/">' > _site/index.html
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages

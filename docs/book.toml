@@ -1,0 +1,15 @@
+[book]
+authors = ["Shrawan13-glitch"]
+language = "en"
+multilingual = false
+src = "src"
+title = "mediyo-core"
+
+[build]
+build-dir = "book"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/TeamShryne/mediyo-core"
+edit-url-template = "https://github.com/TeamShryne/mediyo-core/edit/main/docs/{path}"
