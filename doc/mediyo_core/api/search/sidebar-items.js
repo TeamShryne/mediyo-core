@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["parse_search_response","search","search_with_params"]};
+window.SIDEBAR_ITEMS = {"fn":["parse_search_continuation","parse_search_response","search","search_continuation","search_with_params"]};
