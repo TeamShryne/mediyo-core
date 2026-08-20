@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Category"],"fn":["parse_multi_row_item","parse_search_result","parse_two_row_item"],"struct":["AlbumRef","ArtistRef","SearchFilter","SearchResponse","SearchResult"]};

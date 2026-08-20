@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_ORIGIN"],"fn":["sapisid_hash","sapisid_hash_with_origin"]};

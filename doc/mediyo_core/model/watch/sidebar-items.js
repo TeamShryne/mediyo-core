@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["parse_lyrics","parse_queue","parse_queue_continuation","parse_song"],"struct":["Lyrics","Queue","QueueItem","Song"]};

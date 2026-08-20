@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["LikeStatus"],"fn":["account_info","add_many_to_playlist","add_to_playlist","albums","artists","create_playlist","history","landing","playlists","rate_playlist","rate_song","remove_from_playlist","songs","subscriptions"]};

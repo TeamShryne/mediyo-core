@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["parse_account_info","parse_library_albums","parse_library_artists","parse_library_history","parse_library_playlists","parse_library_songs"],"struct":["AccountInfo","LibraryPage"]};

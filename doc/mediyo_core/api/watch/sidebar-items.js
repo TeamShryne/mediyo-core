@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["extend_queue","get_lyrics","get_queue","get_song","next","next_continuation"]};
