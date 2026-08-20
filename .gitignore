@@ -1,0 +1,5 @@
+/target
+/tmp
+*.payload*.txt
+research/*payload*.txt
+.env
