@@ -26,6 +26,12 @@ pub fn search(session: &Session, query: &str) -> Result<SearchResponse> {
     search_with_params(session, query, None)
 }
 
+/// Fetch next page of a filtered search via its continuation token.
+pub fn search_continuation(session: &Session, token: &str) -> Result<SearchResponse> {
+    let resp = session.request("search", serde_json::json!({"continuation": token}))?;
+    parse_search_continuation(&resp)
+}
+
 /// Parse a `search` endpoint response into results + filter chips.
 pub fn parse_search_response(resp: &Value) -> Result<SearchResponse> {
     let tsr = resp
@@ -89,7 +95,55 @@ pub fn parse_search_response(resp: &Value) -> Result<SearchResponse> {
         }
     }
 
-    Ok(SearchResponse { filters, results })
+    let continuation = section_list
+        .pointer("/continuations/0/nextContinuationData/continuation")
+        .or_else(|| section_list.pointer("/continuations/0/musicShelfContinuation/continuation"))
+        .and_then(|v| v.as_str())
+        .map(String::from)
+        .or_else(|| {
+            // Filtered search: musicShelfRenderer holds the continuation
+            section_list
+                .get("contents")
+                .and_then(|v| v.as_array())
+                .and_then(|arr| arr.iter().find_map(|sec| sec.pointer("/musicShelfRenderer/continuations/0/nextContinuationData/continuation")))
+                .and_then(|v| v.as_str())
+                .map(String::from)
+        })
+        .or_else(|| {
+            section_list
+                .pointer("/continuations/0/gridContinuation/continuation")
+                .and_then(|v| v.as_str())
+                .map(String::from)
+        });
+
+    Ok(SearchResponse { filters, results, continuation })
+}
+
+pub fn parse_search_continuation(resp: &Value) -> Result<SearchResponse> {
+    let cont = resp
+        .pointer("/continuationContents/musicShelfContinuation")
+        .or_else(|| resp.pointer("/continuationContents/itemSectionContinuation"))
+        .ok_or(Error::MissingField("continuationContents"))?;
+
+    let mut results = Vec::new();
+    if let Some(contents) = cont.get("contents").and_then(Value::as_array) {
+        for item in contents {
+            if let Some((rname, _)) = parser::renderer(item) {
+                if rname == "musicResponsiveListItemRenderer" {
+                    results.push(parse_search_result(item)?);
+                } else if rname == "musicTwoRowItemRenderer" {
+                    results.push(crate::model::search::parse_two_row_item(item)?);
+                }
+            }
+        }
+    }
+    let continuation = cont
+        .pointer("/continuations/0/nextContinuationData/continuation")
+        .or_else(|| cont.pointer("/continuations/0/musicShelfContinuation/continuation"))
+        .and_then(|v| v.as_str())
+        .map(String::from);
+
+    Ok(SearchResponse { filters: Vec::new(), results, continuation })
 }
 
 fn parse_chips(header: &Value) -> Vec<SearchFilter> {

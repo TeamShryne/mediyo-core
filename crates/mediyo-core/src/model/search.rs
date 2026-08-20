@@ -100,6 +100,7 @@ pub struct SearchFilter {
 pub struct SearchResponse {
     pub filters: Vec<SearchFilter>,
     pub results: Vec<SearchResult>,
+    pub continuation: Option<String>,
 }
 
 /// Parse a `musicResponsiveListItemRenderer` frame into a [`SearchResult`].
